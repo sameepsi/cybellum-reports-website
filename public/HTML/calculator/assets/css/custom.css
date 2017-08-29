@@ -1,0 +1,168 @@
+.calculator {
+	min-width:280px !important;
+	max-width:650px !important;
+	padding:20px;
+	background:white;
+}
+
+.top-pad-zero {
+	padding:5px;
+	padding-top:0px;
+}
+
+@font-face {
+  font-family: 'RobotoSlab-Bold';
+  src: url('../fonts/RobotoSlab-Bold.ttf');
+}
+
+@font-face {
+  font-family: 'RobotoSlab-Light';
+  src: url('../fonts/RobotoSlab-Light.ttf');
+}
+@font-face {
+  font-family: 'RobotoSlab-Regular';
+  src: url('../fonts/RobotoSlab-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'RobotoSlab-Thin';
+  src: url('../fonts/RobotoSlab-Thin.ttf');
+}
+
+.well {margin-bottom:0px;}
+.well-sm {padding-left:12px;padding-right:2px;}
+.bold {font:22px RobotoSlab-Bold; }
+
+.robo-bold {font-family:RobotoSlab-Bold;color:#6E6E6E}
+.robo-regular {font:12px RobotoSlab-Regular;color:#A7A7A7}
+
+.normal {font:16px RobotoSlab-Bold; color:#B2B2B2}
+
+.amount-sm {background:#DADADA;color:#B3B3B3;}
+
+.text-right{text-align:right;}
+.slider-volume {width:100%;}
+.robo-heading {font:24px RobotoSlab-Bold;color:#6A6A6A;}
+.price {font:16px RobotoSlab-Bold;color:#6A6A6A;}
+
+.amount-title {background:#DADADA;color:#5E5E5E}
+
+.padding-5{padding:5px;}
+
+.amount {background:#737373;color:#94EC00;text-align:center;border-radius:5px;}
+
+.days {font:18px RobotoSlab-Bold;color:#6A6A6A;}
+.mos {font:18px RobotoSlab-Bold;color:#6A6A6A;}
+
+.ui-slider-track .ui-btn.ui-slider-handle {
+	border-radius:15px;
+	background:#EA5F1A;
+	
+	
+}
+
+.padding-top-5 {
+	padding-top:5px;
+}
+
+
+
+.ui-page-theme-a .ui-btn.ui-btn-active, html .ui-bar-a .ui-btn.ui-btn-active, html .ui-body-a .ui-btn.ui-btn-active, html body .ui-group-theme-a .ui-btn.ui-btn-active, html head+body .ui-btn.ui-btn-a.ui-btn-active, .ui-page-theme-a .ui-checkbox-on:after, html .ui-bar-a .ui-checkbox-on:after, html .ui-body-a .ui-checkbox-on:after, html body .ui-group-theme-a .ui-checkbox-on:after, .ui-btn.ui-checkbox-on.ui-btn-a:after, .ui-page-theme-a .ui-flipswitch-active, html .ui-bar-a .ui-flipswitch-active, html .ui-body-a .ui-flipswitch-active, html body .ui-group-theme-a .ui-flipswitch-active, html body .ui-flipswitch.ui-bar-a.ui-flipswitch-active, .ui-page-theme-a .ui-slider-track .ui-btn-active, html .ui-bar-a .ui-slider-track .ui-btn-active, html .ui-body-a .ui-slider-track .ui-btn-active, html body .ui-group-theme-a .ui-slider-track .ui-btn-active, html body div.ui-slider-track.ui-body-a .ui-btn-active {
+	background:#FF4E00;
+	border-color:#FF4E00;
+	border-radius:15px;
+}
+
+div.ui-slider {
+	margin:0px;
+}
+
+.ui-slider-track {
+	height:35px;
+	top:0;
+	margin:0;
+	
+}
+.ui-slider-track .ui-btn.ui-slider-handle {
+	box-shadow:0 1px 3px #E24C12;
+	
+}
+.ui-bar-a, .ui-page-theme-a .ui-bar-inherit, html .ui-bar-a .ui-bar-inherit, html .ui-body-a .ui-bar-inherit, html body .ui-group-theme-a .ui-bar-inherit {
+	border-radius:15px;
+}
+
+.ui-slider-popup {
+background:#818181;
+color:white;
+font-size:18px;
+height:45px;
+padding:10px;
+
+opacity:1;
+width:80px;
+margin-bottom:10px;
+}
+
+
+.ui-slider-popup::after {
+content: '';
+  position: absolute;
+  top: 92%;
+  left: 50%;
+  margin-left: -8px;
+  width: 0; height: 0;
+  border-top: 8px solid transparent;
+  border-right: 8px solid #E84F0C;
+  border-left: 8px solid #E84F0C;
+ border-radius:50%;
+}
+#smsi_loan_amount_container .ui-slider-popup::after {
+  content: '';
+  position: absolute;
+  top: 92%;
+  left: 50%;
+  margin-left: -8px;
+  width: 0; height: 0;
+  border-top: 8px solid transparent;
+  border-right: 8px solid #818181;
+  border-left: 8px solid #818181;
+ border-radius:50%;
+ 
+}
+
+
+#smsi_month_slide_container > .ui-slider .ui-slider-popup {
+	
+	width:110px;
+	background:#E84F0C;
+}
+#smsi_day_slide_container > .ui-slider .ui-slider-popup {
+	
+	width:110px;
+	background:#E84F0C;
+}
+
+
+
+
+.margin-top-10 {margin-top:10px;}
+
+.text-orange {
+	color:#F45915;
+}
+
+.ui-overlay-a, .ui-page-theme-a, .ui-page-theme-a .ui-panel-wrapper {
+	text-shadow:none;
+}
+
+.pad-left-zero {
+	padding:5px;
+	padding-left:0px;
+}
+.pad-right-10 {
+	padding-right:10px;
+}
+
+.ui-body-a, .ui-page-theme-a .ui-body-inherit, html .ui-bar-a .ui-body-inherit, html .ui-body-a .ui-body-inherit, html body .ui-group-theme-a .ui-body-inherit, html .ui-panel-page-container-a {
+	text-shadow:none;
+}

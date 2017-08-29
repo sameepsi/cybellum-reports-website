@@ -1,0 +1,21 @@
+{
+  "name": "website",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "startApp": "SET \"NODE_ENV=production\" && node server.js",
+    "startAppLinux": "export NODE_ENV=production && node server.js"
+  },
+  "author": "Sameep Singhania",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.4",
+    "lodash": "^4.17.4",
+    "request": "^2.81.0",
+    "request-promise": "^4.2.1",
+    "yargs": "^8.0.2"
+  }
+}
