@@ -366,6 +366,19 @@
 								<!-- END: .mailbox-header -->
 
 								<!-- START: .mailbox-actions -->
+								<div style="right:0; position:absolute; width:60%">
+									<div class="row">
+										<div class="col-md-4" style="font-size: 11px;padding-top: 0;margin-top: 26px;" id="pageDesc">
+											Showing 1 to 10 of 57
+										</div>
+										<div class="col-md-8">
+											<ul class="pagination" id="pagination">
+												
+											</ul>
+										</div>
+									</div>
+
+								</div>
 								<div class="mailbox-actions">
 									<ul class="list-unstyled m-none pt-lg pb-lg">
 
@@ -376,10 +389,12 @@
 											<a class="item-action fa fa-times text-danger modal-delete-file" title="Remove documents" id="deleteDocIcon" href="#modalDeleteFile"></a>
 										</li>
 									</ul>
+
 								</div>
 								<!-- END: .mailbox-actions -->
 
 								<div id="mailbox-email-list" class="mailbox-email-list">
+
 									<div class="nano has-scrollbar">
 										<div class="nano-content" tabindex="0" style="right: -15px;">
 											<ul  class="list-unstyled">
@@ -407,7 +422,10 @@
 											</ul>
 										</div>
 									<div class="nano-pane" style="opacity: 1; visibility: visible;"><div class="nano-slider" style="height: 20px; transform: translate(0px, 0px);"></div></div></div>
+
 								</div>
+
+
 							</div>
 						</div>
 					</section>
@@ -417,488 +435,123 @@
 						<div class="col-lg-12">
 							<section class="panel">
 								<header class="panel-heading">
-									<div class="panel-actions">
-										<a href="#" class="panel-action panel-action-toggle" data-panel-toggle=""></a>
-										<a href="#" class="panel-action panel-action-dismiss" data-panel-dismiss=""></a>
-									</div>
 
-									<h2 class="panel-title">Form Elements</h2>
+
+									<h2 class="panel-title" id="docName"></h2>
 								</header>
 								<div class="panel-body" style="display: block;">
-									<form class="form-horizontal form-bordered" method="get">
+									<div class="form-horizontal form-bordered">
 										<div class="form-group">
-											<label class="col-md-3 control-label" for="inputDefault">Default</label>
+											<label class="col-md-3 control-label" for="originalPath">Original Path</label>
 											<div class="col-md-6">
-												<input type="text" class="form-control" id="inputDefault">
-											</div>
-										</div>
-
-										<div class="form-group">
-											<label class="col-md-3 control-label" for="inputDisabled">Disabled</label>
-											<div class="col-md-6">
-												<input class="form-control" id="inputDisabled" type="text" placeholder="Disabled input here..." disabled="">
+												<input type="text" class="form-control" id="originalPath" onchange="originalPathChanged(this.value)">
 											</div>
 										</div>
 
 										<div class="form-group">
-											<label class="col-md-3 control-label" for="inputReadOnly">Read-Only Input</label>
-											<div class="col-md-6">
-												<input type="text" value="Read-Only Input" id="inputReadOnly" class="form-control" readonly="readonly">
+											<div class="row">
+
+											<label class="col-md-3 control-label" for="inputDisabled">Instruction Descriptor</label>
+											<div class="col-md-2">
+												<div class="form-group">
+												<label class="control-label">Access Size</label>
+												<input type="text" name="access_size" id="access_size" class="form-control input-sm" readonly="true">
+											</div>
+											</div>
+											<div class="col-md-2 col-md-offset-1">
+												<div class="form-group">
+												<label class="control-label">Rep Counter</label>
+												<input type="text" name="rep_counter" id="rep_counter" class="form-control input-sm" readonly="true">
+											</div>
+											</div>
+											<div class="col-md-2 col-md-offset-1">
+												<div class="form-group">
+												<label class="control-label">Direction</label>
+												<input type="text" name="direction" id="direction" class="form-control input-sm" readonly="true">
+											</div>
 											</div>
 										</div>
+										<div class="row">
+										<div class="col-md-2 col-md-offset-3">
+											<div class="form-group">
+											<label class="control-label">Is Write</label>
+											<input type="text" name="is_write" id="is_write" class="form-control input-sm" readonly="true">
+										</div>
+										</div>
+										<div class="col-md-2 col-md-offset-1">
+											<div class="form-group">
+											<label class="control-label">Is Repeat</label>
+											<input type="text" name="is_repeat" id="is_repeat" class="form-control input-sm" readonly="true">
+										</div>
+										</div>
+									</div>
+										</div>
+
 
 										<div class="form-group">
-											<label class="col-md-3 control-label" for="inputHelpText">Help text</label>
-											<div class="col-md-6">
-												<input type="text" class="form-control" id="inputHelpText">
-												<span class="help-block">A block of help text that breaks onto a new line and may extend beyond one line.</span>
+											<div class="row">
+
+											<label class="col-md-3 control-label" for="inputDisabled">Runtime Information</label>
+											<div class="col-md-2">
+												<div class="form-group">
+												<label class="control-label">Loading Address</label>
+												<input type="text" name="loading_address" id="loading_address" class="form-control input-sm" readonly="true">
+											</div>
+											</div>
+											<div class="col-md-2 col-md-offset-1">
+												<div class="form-group">
+												<label class="control-label">Process Id</label>
+												<input type="text" name="process_id" id="process_id" class="form-control input-sm" readonly="true">
+											</div>
+											</div>
+											<div class="col-md-2 col-md-offset-1">
+												<div class="form-group">
+												<label class="control-label">Thread Id</label>
+												<input type="text" name="thread_id" id="thread_id" class="form-control input-sm" readonly="true">
+											</div>
 											</div>
 										</div>
 
+										</div>
 										<div class="form-group">
-											<label class="col-md-3 control-label" for="inputRounded">Rounded Input</label>
-											<div class="col-md-6">
-												<input type="text" class="form-control input-rounded" id="inputRounded">
-											</div>
-										</div>
+											<div>
+											<div class="row">
 
-										<div class="form-group">
-											<label class="col-md-3 control-label" for="inputFocus">Input focus</label>
-											<div class="col-md-6">
-												<input class="form-control" id="inputFocus" type="text" value="This is focused...">
-											</div>
+											<label class="col-md-3 control-label" for="inputDisabled">Stack Trace</label>
 										</div>
+										<div id="stackTraceInfo">
 
-										<div class="form-group">
-											<label class="col-md-3 control-label" for="inputPlaceholder">Placeholder</label>
-											<div class="col-md-6">
-												<input type="text" class="form-control" placeholder="placeholder" id="inputPlaceholder">
-											</div>
-										</div>
-
-										<div class="form-group">
-											<label class="col-md-3 control-label" for="inputPassword">Password</label>
-											<div class="col-md-6">
-												<input type="password" class="form-control" placeholder="" id="inputPassword">
-											</div>
-										</div>
-
-										<div class="form-group">
-											<label class=" col-md-3 control-label">Static control</label>
-											<div class="col-lg-6">
-												<p class="form-control-static">email@example.com</p>
-											</div>
-										</div>
-
-										<div class="form-group">
-											<label class="col-md-3 control-label">Left Icon</label>
-											<div class="col-md-6">
-												<div class="input-group input-group-icon">
-													<span class="input-group-addon">
-														<span class="icon"><i class="fa fa-user"></i></span>
-													</span>
-													<input type="text" class="form-control" placeholder="Left icon">
-												</div>
-											</div>
-										</div>
-
-										<div class="form-group">
-											<label class="col-md-3 control-label">Right Icon</label>
-											<div class="col-md-6">
-												<div class="input-group input-group-icon">
-													<input type="text" class="form-control" placeholder="Right icon">
-													<span class="input-group-addon">
-														<span class="icon"><i class="fa fa-user"></i></span>
-													</span>
-												</div>
-											</div>
-										</div>
-
-										<div class="form-group">
-											<label class="col-md-3 control-label">Search</label>
-											<div class="col-md-6">
-												<div class="input-group input-search">
-													<input type="text" class="form-control" name="q" id="q" placeholder="Search...">
-													<span class="input-group-btn">
-														<button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
-													</span>
-												</div>
-											</div>
-										</div>
-
-										<div class="form-group">
-											<label class="col-md-3 control-label">File Upload</label>
-											<div class="col-md-6">
-												<div class="fileupload fileupload-new" data-provides="fileupload">
-													<div class="input-append">
-														<div class="uneditable-input">
-															<i class="fa fa-file fileupload-exists"></i>
-															<span class="fileupload-preview"></span>
-														</div>
-														<span class="btn btn-default btn-file">
-															<span class="fileupload-exists">Change</span>
-															<span class="fileupload-new">Select file</span>
-															<input type="file">
-														</span>
-														<a href="#" class="btn btn-default fileupload-exists" data-dismiss="fileupload">Remove</a>
-													</div>
-												</div>
-											</div>
-										</div>
-
-										<div class="form-group">
-											<label class="col-md-3 control-label">Vertical Group</label>
-											<div class="col-md-6">
-												<section class="form-group-vertical">
-													<input class="form-control" type="text" placeholder="Username">
-													<input class="form-control" type="text" placeholder="Email">
-													<input class="form-control last" type="password" placeholder="Password">
-												</section>
-											</div>
-										</div>
-
-										<div class="form-group">
-											<label class="control-label col-md-3">Vertical Group w/ icon</label>
-											<div class="col-md-6">
-												<section class="form-group-vertical">
-													<div class="input-group input-group-icon">
-														<span class="input-group-addon">
-															<span class="icon"><i class="fa fa-user"></i></span>
-														</span>
-														<input class="form-control" type="text" placeholder="Username">
-													</div>
-													<div class="input-group input-group-icon">
-														<span class="input-group-addon">
-															<span class="icon"><i class="fa fa-key"></i></span>
-														</span>
-														<input class="form-control" type="text" placeholder="Password">
-													</div>
-												</section>
-											</div>
-										</div>
-
-										<div class="form-group has-success">
-											<label class="col-md-3 control-label" for="inputSuccess">Input with success</label>
-											<div class="col-md-6">
-												<input type="text" class="form-control" id="inputSuccess">
-											</div>
-										</div>
-										<div class="form-group has-warning">
-											<label class="col-md-3 control-label" for="inputWarning">Input with warning</label>
-											<div class="col-md-6">
-												<input type="text" class="form-control" id="inputWarning">
-											</div>
-										</div>
-										<div class="form-group has-error">
-											<label class="col-md-3 control-label" for="inputError">Input with error</label>
-											<div class="col-md-6">
-												<input type="text" class="form-control" id="inputError">
-											</div>
-										</div>
-
-										<div class="form-group">
-											<label class="col-md-3 control-label" for="inputTooltip">Input with Tooltip</label>
-											<div class="col-md-6">
-												<input type="text" placeholder="Hover me" title="" data-toggle="tooltip" data-trigger="hover" class="form-control" data-original-title="Place your tooltip info here" id="inputTooltip">
-											</div>
-										</div>
-
-										<div class="form-group">
-											<label class="col-md-3 control-label" for="inputPopover">Input with Popover</label>
-											<div class="col-md-6">
-												<input type="text" placeholder="Click Here" class="form-control" data-toggle="popover" data-placement="top" data-original-title="The Title" data-content="Content goes here..." data-trigger="click" id="inputPopover">
-											</div>
-										</div>
-
-										<div class="form-group">
-											<label class="col-md-3 control-label">Column sizing</label>
-											<div class="col-sm-8">
-												<div class="row">
-													<div class="col-sm-2">
-														<input type="text" class="form-control" placeholder=".col-sm-2">
-													</div>
-													<div class="visible-xs mb-md"></div>
-													<div class="col-sm-3">
-														<input type="text" class="form-control" placeholder=".col-sm-3">
-													</div>
-													<div class="visible-xs mb-md"></div>
-													<div class="col-sm-4">
-														<input type="text" class="form-control" placeholder=".col-sm-4">
-													</div>
-												</div>
-
-											</div>
-										</div>
-									</form>
-								</div>
-							</section>
-
-							<section class="panel">
-								<header class="panel-heading">
-									<div class="panel-actions">
-										<a href="#" class="panel-action panel-action-toggle" data-panel-toggle=""></a>
-										<a href="#" class="panel-action panel-action-dismiss" data-panel-dismiss=""></a>
 									</div>
 
-									<h2 class="panel-title">Controls sizing</h2>
-								</header>
-								<div class="panel-body" style="display: block;">
-									<form class="form-horizontal form-bordered" method="get">
-										<div class="form-group">
-											<label class="col-md-3 control-label" for="inputSuccess">Input sizing</label>
-											<div class="col-md-6">
-												<input class="form-control input-lg mb-md" type="text" placeholder=".input-lg">
-												<input class="form-control mb-md" type="text" placeholder="Default input">
-												<input class="form-control input-sm mb-md" type="text" placeholder=".input-sm">
-											</div>
-										</div>
 
-										<div class="form-group">
-											<label class="col-md-3 control-label" for="inputSuccess">Select sizing</label>
-											<div class="col-md-6">
-												<select class="form-control input-lg mb-md">
-													<option>Option 1</option>
-													<option>Option 2</option>
-													<option>Option 3</option>
-												</select>
-												<select class="form-control mb-md">
-													<option>Option 1</option>
-													<option>Option 2</option>
-													<option>Option 3</option>
-												</select>
-												<select class="form-control input-sm mb-md">
-													<option>Option 1</option>
-													<option>Option 2</option>
-													<option>Option 3</option>
-												</select>
-											</div>
-										</div>
-									</form>
 								</div>
-							</section>
-							<section class="panel">
-								<div class="panel-body">
-									<form class="form-horizontal form-bordered" method="get">
-										<div class="form-group">
-											<label class="col-md-3 control-label" for="inputSuccess">Checkboxes and radios</label>
-											<div class="col-md-6">
-												<div class="checkbox">
-													<label>
-														<input type="checkbox" value="">
-														Option one is this and that—be sure to include why it's great
-													</label>
-												</div>
-
-												<div class="checkbox">
-													<label>
-														<input type="checkbox" value="">
-														Option one is this and that—be sure to include why it's great option one
-													</label>
-												</div>
-
-												<div class="radio">
-													<label>
-														<input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="">
-														Option one is this and that—be sure to include why it's great
-													</label>
-												</div>
-												<div class="radio">
-													<label>
-														<input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
-														Option two can be something else and selecting it will deselect option one
-													</label>
-												</div>
-
-											</div>
 										</div>
 										<div class="form-group">
-											<label class="col-md-3 control-label" for="inputSuccess">Inline checkboxes</label>
-											<div class="col-md-6">
-												<label class="checkbox-inline">
-													<input type="checkbox" id="inlineCheckbox1" value="option1"> 1
-												</label>
-												<label class="checkbox-inline">
-													<input type="checkbox" id="inlineCheckbox2" value="option2"> 2
-												</label>
-												<label class="checkbox-inline">
-													<input type="checkbox" id="inlineCheckbox3" value="option3"> 3
-												</label>
-											</div>
+											<div>
+											<div class="row">
+
+											<label class="col-md-3 control-label" for="extra_info">Extra Info.<a class="item-action fa fa-plus " title="Add extra info" id="addExtraInfo" onclick="addExtraInfoRow()"></a>
+</label>
+
 										</div>
-										<div class="form-group">
-											<label class="col-md-3 control-label" for="inputSuccess">Selects</label>
-											<div class="col-md-6">
-												<select class="form-control mb-md">
-													<option>1</option>
-													<option>2</option>
-													<option>3</option>
-													<option>4</option>
-													<option>5</option>
-												</select>
+										<div id="extraInfo">
 
-												<select multiple="" class="form-control">
-													<option>1</option>
-													<option>2</option>
-													<option>3</option>
-													<option>4</option>
-													<option>5</option>
-												</select>
-											</div>
-										</div>
 
-									</form>
-								</div>
-							</section>
-
-							<section class="panel">
-								<header class="panel-heading">
-									<div class="panel-actions">
-										<a href="#" class="panel-action panel-action-toggle" data-panel-toggle=""></a>
-										<a href="#" class="panel-action panel-action-dismiss" data-panel-dismiss=""></a>
 									</div>
 
-									<h2 class="panel-title">Input Groups</h2>
-								</header>
-								<div class="panel-body">
-									<form class="form-horizontal form-bordered" method="get">
-										<div class="form-group">
-											<label class="col-md-3 control-label">Basic examples</label>
-											<div class="col-md-6">
-												<div class="input-group mb-md">
-													<span class="input-group-addon btn-success">@</span>
-													<input type="text" class="form-control" placeholder="Username">
-												</div>
 
-												<div class="input-group mb-md">
-													<input type="text" class="form-control">
-													<span class="input-group-addon btn-warning">.00</span>
-												</div>
-
-												<div class="input-group mb-md">
-													<span class="input-group-addon">$</span>
-													<input type="text" class="form-control">
-													<span class="input-group-addon ">.00</span>
-												</div>
-											</div>
+								</div>
 										</div>
 										<div class="form-group">
-											<label class="col-md-3 control-label">Sizing</label>
-											<div class="col-md-6">
-												<div class="input-group input-group-lg mb-md">
-													<span class="input-group-addon btn-danger">@</span>
-													<input type="text" class="form-control input-lg" placeholder="Username">
-												</div>
+										    <div class="col-sm-10">
+										      <button class="btn btn-primary" onclick="updateDocument()">Submit</button>
+										    </div>
+										  </div>
 
-												<div class="input-group mb-md">
-													<span class="input-group-addon">@</span>
-													<input type="text" class="form-control" placeholder="Username">
-												</div>
 
-												<div class="input-group input-group-sm mb-md">
-													<span class="input-group-addon">@</span>
-													<input type="text" class="form-control" placeholder="Username">
-												</div>
-
-											</div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-3 control-label">Iconic</label>
-											<div class="col-md-6">
-												<div class="input-group mb-md">
-													<span class="input-group-addon">
-														<i class="fa fa-user"></i>
-													</span>
-													<input type="text" class="form-control" placeholder="Username">
-												</div>
-												<div class="input-group mb-md">
-													<span class="input-group-addon">
-														<i class="fa fa-envelope"></i>
-													</span>
-													<input type="text" class="form-control" placeholder="Email">
-												</div>
-											</div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-3 control-label">Checkbox and radio</label>
-											<div class="col-md-6">
-												<div class="input-group mb-md">
-													<span class="input-group-addon">
-														<input type="checkbox">
-													</span>
-													<input type="text" class="form-control">
-												</div>
-
-												<div class="input-group mb-md">
-													<span class="input-group-addon">
-														<input type="radio">
-													</span>
-													<input type="text" class="form-control">
-												</div>
-
-											</div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-3 control-label">Button addons</label>
-											<div class="col-md-6">
-												<div class="input-group mb-md">
-													<span class="input-group-btn">
-														<button class="btn btn-danger" type="button">Go!</button>
-													</span>
-													<input type="text" class="form-control">
-												</div>
-
-												<div class="input-group mb-md">
-													<input type="text" class="form-control">
-													<span class="input-group-btn">
-														<button class="btn btn-success" type="button">Go!</button>
-													</span>
-												</div>
-											</div>
-										</div>
-
-										<div class="form-group">
-											<label class="col-md-3 control-label">Segmented buttons</label>
-											<div class="col-md-6">
-												<div class="input-group mb-md">
-													<div class="input-group-btn">
-														<button tabindex="-1" class="btn btn-primary" type="button">Action</button>
-														<button tabindex="-1" data-toggle="dropdown" class="btn btn-primary dropdown-toggle" type="button">
-															<span class="caret"></span>
-														</button>
-														<ul role="menu" class="dropdown-menu">
-															<li><a href="#">Action</a></li>
-															<li><a href="#">Another action</a></li>
-															<li><a href="#">Something else here</a></li>
-															<li class="divider"></li>
-															<li><a href="#">Separated link</a></li>
-														</ul>
-													</div>
-													<input type="text" class="form-control">
-												</div>
-
-												<div class="input-group mb-md">
-													<input type="text" class="form-control">
-													<div class="input-group-btn">
-														<button tabindex="-1" class="btn btn-primary" type="button">Action</button>
-														<button tabindex="-1" data-toggle="dropdown" class="btn btn-primary dropdown-toggle" type="button">
-															<span class="caret"></span>
-														</button>
-														<ul role="menu" class="dropdown-menu pull-right">
-															<li><a href="#">Action</a></li>
-															<li><a href="#">Another action</a></li>
-															<li><a href="#">Something else here</a></li>
-															<li class="divider"></li>
-															<li><a href="#">Separated link</a></li>
-														</ul>
-													</div>
-												</div>
-											</div>
-										</div>
-
-									</form>
+									</div>
 								</div>
 							</section>
-
 						</div>
 					</div>
 					<!-- Document Detail ends here -->

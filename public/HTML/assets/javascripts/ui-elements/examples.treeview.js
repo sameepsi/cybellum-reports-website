@@ -2,6 +2,19 @@ var folderIds = [];
 var selectedFolder;
 var selectedFolderToUpload;
 var selectedFolderName;
+var customFields;
+var editableFields;
+var selectedDocument;
+var extraInfoList = {};
+var extraInfoIndex = 0;
+var limit = 20;
+var currentPage = 1;
+var totalPages = 1;
+var totalDocs = 1;
+var initialCurrentPage = 1;
+
+
+
 (function($) {
 
 	'use strict';
@@ -115,7 +128,8 @@ var selectedFolderName;
 				});
 			}
 		}
-		showDocList(id, selectedFolderName);
+
+		showDocList(id, selectedFolderName, initialCurrentPage, limit);
 
 	});
 
@@ -128,10 +142,90 @@ var selectedFolderName;
 	});
 
 
+	getEditableFields().then(function(response){
+		editableFields = response;
+	}).catch(function(error){
+		console.log(error);
+	});
 	fetchFolders();
 
 }).apply(this, [jQuery]);
 
+function addKey(index, key){
+	if(extraInfoList[key]){
+		$("#extra_info_key_"+index).val('');
+		return alert("key already exists!!");
+	}
+	if(!key || key.trim().length<=0){
+		return alert("Please enter valid key!!");
+	}
+	extraInfoList[key]='';
+	window.event.srcElement.setAttribute("readonly","true");
+}
+
+function deleteExtraInfoRow(index){
+	var key = $("#extra_info_key_"+index).val();
+	if(key){
+				delete extraInfoList[key];
+	}
+	$("#extra_info_"+index).remove();
+}
+function valueChanged(index, value){
+	if(!value || value.trim().length<=0){
+		return alert("Please provide some valid values!!");
+	}
+	var key = $("#extra_info_key_"+index).val();
+	if(!key || key.trim().length<=0){
+		$("#extra_info_value_"+index).val('');
+		return alert("Please provide key before value");
+	}
+	extraInfoList[key] = value;
+}
+function addExtraInfoRow(){
+	var html = '<div class="row" id="extra_info_'+extraInfoIndex+'">'+
+	'<div class="col-md-2 col-md-offset-3">'+
+		'<div class="form-group">'+
+		'<input type="text" class="form-control input-sm" id="extra_info_key_'+extraInfoIndex+'" onchange="addKey('+extraInfoIndex+',this.value)">'+
+	'</div>'+
+	'</div>'+
+	'<div class="col-md-2 col-md-offset-1">'+
+		'<div class="form-group">'+
+		'<input type="text" class="form-control input-sm" id="extra_info_value_'+extraInfoIndex+'" onchange="valueChanged('+extraInfoIndex+',this.value)">'+
+	'</div>'+
+	'</div>'+
+	'<div class="col-md-2 col-md-offset-1">'+
+		'<div class="form-group">'+
+		'<a class="item-action fa fa-minus " title="Add extra info" id="addExtraInfo" onclick="deleteExtraInfoRow('+extraInfoIndex+')"></a>'+
+	'</div>'+
+	'</div>'+
+
+'</div>'
+extraInfoIndex++;
+$("#extraInfo").append(html);
+}
+
+function addExtraInfo(key, value){
+	var html = '<div class="row" id="extra_info_'+extraInfoIndex+'">'+
+	'<div class="col-md-2 col-md-offset-3">'+
+		'<div class="form-group">'+
+		'<input type="text" value="'+key+'" readonly="true" class="form-control input-sm" id="extra_info_key_'+extraInfoIndex+'" onchange="addKey('+extraInfoIndex+',this.value)">'+
+	'</div>'+
+	'</div>'+
+	'<div class="col-md-2 col-md-offset-1">'+
+		'<div class="form-group">'+
+		'<input type="text" value="'+value+'" class="form-control input-sm" id="extra_info_value_'+extraInfoIndex+'" onchange="valueChanged('+extraInfoIndex+',this.value)">'+
+	'</div>'+
+	'</div>'+
+	'<div class="col-md-2 col-md-offset-1">'+
+		'<div class="form-group">'+
+		'<a class="item-action fa fa-minus " title="Add extra info" id="addExtraInfo" onclick="deleteExtraInfoRow('+extraInfoIndex+')"></a>'+
+	'</div>'+
+	'</div>'+
+
+'</div>'
+extraInfoIndex++;
+$("#extraInfo").append(html);
+}
 function addFolderClicked(){
 	var name = $("#name").val();
 	addFolder(name, selectedFolder).then(function(res){
@@ -243,7 +337,7 @@ function showDashBoard(){
 
 }
 
-function showDocList(folderId, folderName){
+function showDocList(folderId, folderName, page, limitToSend){
 	$("#docList").removeClass("hide");
 	$("#dashboardData").addClass("hide");
 	$("#documentDetail").addClass("hide");
@@ -251,9 +345,14 @@ function showDocList(folderId, folderName){
 	$("#folderName").text(folderName);
 	$("#headerText").text("Documents");
 
-	getDocumentsInsideFolder(folderId).then(function(data){
+	getDocumentsInsideFolder(folderId, limitToSend, page).then(function(data){
+		currentPage = data.page;
+		limit = data.limit;
+		totalDocs = data.total;
+		totalPages = data.pages;
 		renderDocumentList(data);
-		console.log(data);
+
+
 	}, function(err){
 		console.log(err);
 	})
@@ -262,7 +361,68 @@ function showDocList(folderId, folderName){
 
 function renderDocumentList(documents){
 	$("#documentList").empty();
+	$("#pagination").empty();
 	if(documents.docs.length>0){
+		var currentLastDoc = (currentPage*limit)<totalDocs?(currentPage*limit):totalDocs;
+		$("#pageDesc").text('Showing '+((currentPage-1)*limit +1)+' to '+(currentLastDoc)+' of '+totalDocs);
+		var hClass = "prev"
+		if(currentPage===1){
+			hClass+=" disabled"
+		}
+		var html = '<li class="'+hClass+'"><a href="#" onclick="gotoFirstPage()" title="first page" disabled><span class="fa fa-chevron-left">'+
+		'<span class="fa fa-chevron-left"></span></a></li>'
+		$("#pagination").append(html);
+		hClass="prev";
+		if(currentPage===1){
+			hClass+=" disabled"
+		}
+		html='<li class="'+hClass+'"><a href="#" onclick="gotoPreviousPage()" title="previous page" disabled><span class="fa fa-chevron-left"></span></a></li>'
+		$("#pagination").append(html);
+		var rem = currentPage % 5;
+		var i = 1;
+		var final = 1;
+		if(rem==0){
+			i = currentPage-4;
+			final = currentPage;
+		}
+		else if(rem===1){
+			i = currentPage;
+			final = currentPage+4>=totalPages?totalPages:currentPage+4;
+		}
+		else if(rem===2){
+			i = currentPage -1;
+			final = currentPage+3>=totalPages?totalPages:currentPage+3;
+		}
+		else if(rem===3){
+			i = currentPage - 2;
+			final = currentPage+2>=totalPages?totalPages:currentPage+2;
+		}
+		else if(rem===4){
+			i = currentPage - 3;
+			final = currentPage+1>=totalPages?totalPages:currentPage+1;
+		}
+		for(;i<=final;i++){
+			var liClass = "";
+			if(i===currentPage){
+				liClass="active";
+			}
+
+			var html = '<li class="'+liClass+'"><a href="#" onclick = gotoPage('+i+')>'+i+'</a></li>'
+			$("#pagination").append(html);
+		}
+		hClass="next";
+		if(currentPage===totalPages){
+			hClass+=" disabled"
+		}
+		html='<li class="'+hClass+'"><a href="#" onclick="gotoNextPage()" disabled title="next page"><span class="fa fa-chevron-right"></span></a></li>'
+		$("#pagination").append(html);
+		hClass="next";
+		if(currentPage===totalPages){
+			hClass+=" disabled"
+		}
+		html='<li class="'+hClass+'"><a href="#" onclick="gotoLastPage()" disabled title="last page"><span class="fa fa-chevron-right"><span class="fa fa-chevron-right"></span></a></li>'
+		$("#pagination").append(html);
+
 		documents.docs.forEach(function(document){
 			$("#documentList").append(addDocumentInList(document));
 		});
@@ -277,12 +437,167 @@ function addDocumentInList(document){
 	var html = '<li class="unread"><div class="checkbox-custom checkbox-text-primary ib"><input type="checkbox" name="test" val='+document._id+' id="'+document._id+'_document"><label for="mail1"></label></div><a href="#" onClick="openDocument(\''+document._id+'\')";"><div class="col-sender"><p class="m-none ib">'+fileName+'</p></div><div class="col-mail"><p class="m-none mail-content"><span class="subject">'+filePath+'</span></p><p class="m-none mail-date">'+targetAddress+'</p></div></a></li>'
 	return html;
 }
+
+function renderDocument(document){
+	var filePath = document.original_path;
+	var fileName = filePath.substring(filePath.lastIndexOf("\\")+1, filePath.length);
+	$("#docName").text(fileName);
+	$("#originalPath").val(filePath);
+	$("#access_size").val(document.instruction_descriptor.access_size);
+	$("#rep_counter").val(document.instruction_descriptor.rep_counter);
+	$("#direction").val(document.instruction_descriptor.direction);
+	$("#is_write").val(document.instruction_descriptor.is_write);
+	$("#is_repeat").val(document.instruction_descriptor.is_repeat);
+	$("#loading_address").val(document.runtime_information.loading_address);
+	$("#process_id").val(document.runtime_information.process_id);
+	$("#thread_id").val(document.runtime_information.thread_id);
+	renderStackTraces(document.stacktrace);
+	renderCustomFields(document.extra_info);
+
+}
+function renderCustomFields(extraInfo){
+
+	if(extraInfo && extraInfo.data){
+		$("#extraInfo").empty();
+		extraInfoList = {};
+		extraInfoIndex = 0;
+		Object.keys(extraInfo.data).forEach(function(key){
+			extraInfoList[key] = extraInfo.data[key];
+			addExtraInfo(key, extraInfo.data[key]);
+		});
+
+	}
+
+
+}
+function commentModified(index, value){
+	if(commentList[index]){
+		commentList[index] = value;
+	}
+}
+function commentAdded(index, value){
+	commentList[index] = value;
+}
+function renderComments(customFields){
+	$("#commentList").empty();
+	if(customFields && customFields.comments){
+		 commentIndex = 0;
+		commentList = {};
+		for(let comment of customFields.comments){
+			commentList[index] = comment;
+			var html = '<div class="col-md-6">'+
+				'<input type="text" class="form-control" id="comment_'+commentIndex+'" onchange="commentModified('+commentIndex+',this.value)" value="'+comment+'">'+
+			'</div>'
+			$("#commentList").append(html);
+			commentIndex++;
+		}
+
+	}
+	var html = '<div class="col-md-6">'+
+		'<input type="text" class="form-control" id="comment_'+commentIndex+'" onchange="commentAdded('+commentIndex+',this.value)">'+
+	'</div>'
+	$("#commentList").append(html);
+	commentIndex++;
+}
+function renderStackTraces(stacktraces){
+	var index = 1;
+	$("#stackTraceInfo").empty();
+	stacktraces.forEach(function(stacktrace){
+		var html = renderStackTrace(index, stacktrace.rva_on_original, stacktrace.rva, stacktrace.function, stacktrace.module, stacktrace.repository.original, stacktrace.repository.mined)
+		index++;
+		$("#stackTraceInfo").append(html);
+	});
+}function rvaOnOriginalChanged(index, value){
+	if(selectedDocument){
+		selectedDocument.stacktrace[index].rva_on_original = value;
+	}
+}
+function rvaChanged(index, value){
+	if(selectedDocument){
+		selectedDocument.stacktrace[index].rva = value;
+	}
+}
+function moduleChanged(index, value){
+	if(selectedDocument){
+		selectedDocument.stacktrace[index].module = value;
+	}
+}
+function functionChanged(index, value){
+	if(selectedDocument){
+		selectedDocument.stacktrace[index].function = value;
+	}
+}
+function originalChanged(index, value){
+	if(selectedDocument){
+		selectedDocument.stacktrace[index].repository.original = value;
+	}
+}
+function minedChanged(index, value){
+	if(selectedDocument){
+		selectedDocument.stacktrace[index].repository.mined = value;
+	}
+}
+function renderStackTrace(index, rva_on_original, rva, func, mod, original, mined){
+	var html = '<div class="row">'+
+	'<label class="col-md-3 control-label" for="inputDisabled">'+index+'</label>'+
+	'<div class = "col-md-9">'+
+	'<div class="row">'+
+	'<div class="col-md-3">'+
+	'<div class="form-group">'+
+	'<label class="control-label">rva_on_original</label>'+
+	'<input type="text" name="rva_on_original" id="rva_on_original_'+index+'" class="form-control input-sm" value="'+rva_on_original+'" onchange="rvaOnOriginalChanged('+(index-1)+',this.value)">'+
+	'</div>'+
+	'</div>'+
+	'<div class="col-md-3">'+
+	'<div class="form-group">'+
+	'<label class="control-label">rva</label>'+
+	'<input type="text" name="rva" id="rva_'+index+'" class="form-control input-sm" value="'+rva+'" onchange="rvaChanged('+(index-1)+',this.value)">'+
+	'</div>'+
+	'</div>'+
+	'<div class="col-md-4">'+
+	'<div class="form-group">'+
+	'<label class="control-label">module</label>'+
+	'<input type="text" name="module" id="module_'+index+'" class="form-control input-sm" value="'+mod+'" onchange="moduleChanged('+(index-1)+',this.value)">'+
+	'</div>'+
+	'</div>'+
+	'</div>'+
+	'<div class="row">'+
+	'<div class="col-md-11">'+
+	'<div class="form-group">'+
+	'<label class="control-label">function</label>'+
+	'<input type="text" name="function" id="function_'+index+'" class="form-control input-sm" value="'+func+'" onchange="functionChanged('+(index-1)+',this.value)">'+
+	'</div>'+
+	'</div>'+
+	'</div>'+
+	'<div class="row">'+
+
+	'<div class="col-md-5">'+
+	'<div class="form-group">'+
+	'<label class="control-label">Original Repository</label>'+
+	'<input type="text" name="original" id="original_'+index+'" class="form-control input-sm" value="'+original+'" onchange="originalChanged('+(index-1)+',this.value)">'+
+	'</div>'+
+	'</div>'+
+	'<div class="col-md-5 col-md-offset-1">'+
+	'<div class="form-group">'+
+	'<label class="control-label">Mined Repository</label>'+
+	'<input type="text" name="minde" id="mined_'+index+'" class="form-control input-sm" value="'+mined+'" onchange="minedChanged('+(index-1)+',this.value)">'+
+	'</div>'+
+	'</div>'+
+
+	'</div>'+
+	'<hr>'+
+	'</div>'+
+
+	'</div>'
+	return html;
+}
 function openDocument(docId){
 	$("#docList").addClass("hide");
 	$("#documentDetail").removeClass("hide");
 	$("#headerText").text("Document");
 	getDocument(docId).then(function(res){
-		console.log(res);
+		selectedDocument = res;
+		renderDocument(res);
 	}).catch(function(err){
 		console.log(err);
 	});
@@ -305,10 +620,10 @@ function moveDocsToFolder(){
 			return deleteFilesFromFolder();
 		}
 		moveDocsToFolderApi(folderId, selectedDocsId).then(function(data){
-			showDocList(selectedFolder, selectedFolderName);
+			showDocList(selectedFolder, selectedFolderName, currentPage, limit);
 		}).catch(function(e){
 			if(e.status===200){
-				showDocList(selectedFolder, selectedFolderName);
+				showDocList(selectedFolder, selectedFolderName, currentPage, limit);
 
 			}
 		});
@@ -337,7 +652,7 @@ function deleteFolderFromView() {
 }
 function deleteFolder(){
 	deleteFolderApi(selectedFolder).then(function(res){
-			deleteFolderFromView();
+		deleteFolderFromView();
 		selectDefaultFolder();
 	}, function(err){
 		console.log(err);
@@ -356,10 +671,76 @@ function deleteFilesFromFolder(){
 		return alert("Please selected documents to delete.");
 	}
 	deleteDocsApi(selectedFolder, selectedDocsId).then(function(data){
-		showDocList(selectedFolder, selectedFolderName);
+		showDocList(selectedFolder, selectedFolderName, currentPage, limit);
 	}, function (error){
-		showDocList(selectedFolder, selectedFolderName);
+		showDocList(selectedFolder, selectedFolderName, currentPage, limit);
 
 		console.log(error);
 	})
+}
+
+function originalPathChanged(value){
+	if(selectedDocument){
+		selectedDocument.original_path = value;
+	}
+}
+
+function updateDocument(){
+	window.event.stopPropagation();
+
+	if(selectedDocument){
+
+		if(!selectedDocument.extra_info){
+			selectedDocument.extra_info={};
+		}
+		for(let key of Object.keys(extraInfoList)){
+			if(!extraInfoList[key] || extraInfoList[key].trim().length<=0){
+				return alert("Please provide value for key "+ key);
+			}
+		}
+		selectedDocument.extra_info.data = extraInfoList;
+		var data = {
+			original_path: selectedDocument.original_path,
+			stacktrace: selectedDocument.stacktrace,
+			extra_info:selectedDocument.extra_info,
+		}
+		updateDocApi(selectedDocument._id, data).then(function(response){
+			console.log(response);
+		}, function(err){
+			console.log(err);
+		});
+	}
+}
+
+function gotoFirstPage(){
+	if(currentPage===1){
+		return;
+	}
+	showDocList(selectedFolder, selectedFolderName, 1, limit);
+}
+function gotoPreviousPage(){
+	if(currentPage===1){
+		return;
+	}
+	showDocList(selectedFolder, selectedFolderName, currentPage-1, limit);
+
+}
+
+function gotoNextPage(){
+	if(currentPage===totalPages){
+		return;
+	}
+	showDocList(selectedFolder, selectedFolderName, currentPage+1, limit);
+
+}
+function gotoPage(page){
+	showDocList(selectedFolder, selectedFolderName, page, limit);
+
+}
+function gotoLastPage(){
+if(currentPage===totalPages){
+	return;
+}
+showDocList(selectedFolder, selectedFolderName, totalPages, limit);
+
 }

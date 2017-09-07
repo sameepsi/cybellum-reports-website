@@ -8,31 +8,6 @@ const yargs = require('yargs');
 const rp = require('request-promise');
 const querystring = require('querystring');
 
-const argv=yargs.options({
-  p:{
-    describe:'port number',
-    demand:true,
-    alias:'port',
-    string:true
-  },
-  c:{
-    describe:'url of reports service',
-    demand:true,
-    alias:'reportWebService',
-    string:true
-  }
-}).help()
-.alias('help','h')
-.argv;
-
-var port = process.env.PORT || 3000;
-if(argv.port){
-  port = argv.port;
-}
-
-if(argv.reportWebService){
-  process.env.REPORT_SERVICE_URL = argv.reportWebService;
-}
 
 var app=express();
 app.use(express.static(path.join(__dirname, 'public/HTML')));

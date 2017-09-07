@@ -21,8 +21,36 @@ function addFolder(name, parent){
 
 }
 
-function getDocumentsInsideFolder(folderId){
-	return $.get("/api/web/folder/"+folderId+"/document");
+
+function addFolder(name, parent){
+	var data ={
+		name:name,
+		parent:parent
+	}
+	return $.ajax({
+		type: "POST",
+		url: "/api/web/folder",
+		data: JSON.stringify(data),
+		contentType: "application/json; charset=utf-8",
+		dataType: "json"
+	});
+
+}
+
+function updateDocApi(docId, data){
+
+	return $.ajax({
+		type: "PUT",
+		url: "/api/web/document/"+docId,
+		data: JSON.stringify(data),
+		contentType: "application/json; charset=utf-8",
+		dataType: "json"
+	});
+
+}
+
+function getDocumentsInsideFolder(folderId, limit, page){
+	return $.get("/api/web/folder/"+folderId+"/document?limit="+limit+"&page="+page);
 }
 
 function moveDocsToFolderApi(folderId, docIds){
@@ -58,5 +86,10 @@ function deleteDocsApi(folderId, docIds){
 		contentType: "application/json; charset=utf-8",
 		dataType: "json"
 	});
+}
 
+
+
+function getEditableFields(){
+	return $.get("/api/web/document/editableFields");
 }
