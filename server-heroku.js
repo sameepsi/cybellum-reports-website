@@ -8,6 +8,8 @@ const yargs = require('yargs');
 const rp = require('request-promise');
 const querystring = require('querystring');
 
+var port = process.env.PORT || 3000;
+
 
 var app=express();
 app.use(express.static(path.join(__dirname, 'public/HTML')));
