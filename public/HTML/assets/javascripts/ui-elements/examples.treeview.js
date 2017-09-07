@@ -30,7 +30,24 @@ var initialCurrentPage = 1;
 		modal: true
 	});
 
+	$('.modal-root-folder').magnificPopup({
+		type: 'inline',
+		preloader: false,
+		focus: '#name',
+		modal: true,
 
+		// When elemened is focused, some mobile browsers in some cases zoom in
+		// It looks not nice, so we disable it:
+		callbacks: {
+			beforeOpen: function() {
+				if($(window).width() < 700) {
+					this.st.focus = false;
+				} else {
+					this.st.focus = '#name';
+				}
+			}
+		}
+	});
 
 	$('#treeDragDrop').jstree({
 		'core' : {
@@ -234,6 +251,23 @@ function addFolderClicked(){
 		foldObject['id']=res._id;
 		foldObject['type']='folder';
 		createFolders(res.parent, foldObject).then(function(res){
+			console.log("Folder Added successfully");
+		}, function(error){
+			console.log(err);
+		})
+	}, function(err){
+		console.log(err);
+	})
+}
+
+function addRootFolderClicked(){
+	var name = $("#rootName").val();
+	addFolder(name).then(function(res){
+		var foldObject = {};
+		foldObject['text']=res.name;
+		foldObject['id']=res._id;
+		foldObject['type']='folder';
+		createFolders("#", foldObject).then(function(res){
 			console.log("Folder Added successfully");
 		}, function(error){
 			console.log(err);
@@ -645,7 +679,7 @@ function selectDefaultFolder(){
 }
 
 function deleteFolderFromView() {
-	$('#basicTree').jstree(true).delete_node(selectedFolder);
+	$('#basicTree').jstree(true).delete_node(selectedFolder+"_basic");
 	$('#treeDragDrop').jstree(true).delete_node(selectedFolder);
 	selectedFolder = undefined;
 	selectedFolderName = undefined;
