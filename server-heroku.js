@@ -123,7 +123,32 @@ app.put('/api/web/document/:documentId', async (req,res) => {
   }
 }
 );
+app.put('/api/web/folder/:folderId', async (req,res) => {
 
+  if(process.env.REPORT_SERVICE_URL){
+    var uri = process.env.REPORT_SERVICE_URL + "/folder/"+req.params.folderId;
+    if(Object.keys(req.query).length>0){
+      uri =uri+"?"+ querystring.stringify(req.query);
+    }
+    var options = {
+      method:"PUT",
+      uri,
+      body:req.body,
+      json: true
+    }
+    try{
+      var response = await rp(options);
+      res.status(200).send(response);
+    }catch(e){
+      console.log(e)
+      res.status(500).send();
+    }
+  }
+  else{
+    res.status(500).send();
+  }
+}
+);
 app.post('/api/web/folder/:id/document', async (req,res) => {
 
   if(process.env.REPORT_SERVICE_URL){
