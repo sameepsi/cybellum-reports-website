@@ -4402,9 +4402,7 @@ ul.nav-main li .nav-children li a {
 	overflow: hidden;
 }
 
-ul.nav-main li .nav-children li a:hover, ul.nav-main li .nav-children li a:focus {
-	background: #191c21;
-}
+
 
 ul.nav-main li .nav-children li a:after {
 	padding: 6px 25px;

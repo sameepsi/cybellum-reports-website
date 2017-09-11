@@ -88,7 +88,18 @@ function deleteDocsApi(folderId, docIds){
 	});
 }
 
-
+function editFolderApi(folderId, name){
+	var data = {
+		name:name
+	}
+	return $.ajax({
+		type: "PUT",
+		url: "/api/web/folder/"+folderId,
+		data: JSON.stringify(data),
+		contentType: "application/json; charset=utf-8",
+		dataType: "json"
+	});
+}
 
 function getEditableFields(){
 	return $.get("/api/web/document/editableFields");
