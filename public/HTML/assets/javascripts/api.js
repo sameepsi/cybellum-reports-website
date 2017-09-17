@@ -49,8 +49,8 @@ function updateDocApi(docId, data){
 
 }
 
-function getDocumentsInsideFolder(folderId, limit, page){
-	return $.get("/api/web/folder/"+folderId+"/document?limit="+limit+"&page="+page);
+function getDocumentsInsideFolder(vulnerability_type, limit, page){
+	return $.get("/api/web/document?vulnerability_type="+vulnerability_type+"&limit="+limit+"&page="+page);
 }
 
 function moveDocsToFolderApi(folderId, docIds){

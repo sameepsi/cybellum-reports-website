@@ -120,118 +120,21 @@ var editFolderName;
 		e.preventDefault();
 		$.magnificPopup.close();
 	});
-	$('#treeDragDrop').on("deselect_all.jstree", function (e, data) {
-		if(data.node.length>0){
-			var id = data.node[0];
 
-			if($("span#"+id+"_span").length>0){
-				$("span#"+id+"_span").remove();
-
-			}
-		}
-	});
-	$('#treeDragDrop').on("dehover_node.jstree", function (e, data) {
-		if(data.node){
-			var id = data.node.id;
-			if(selectedFolder!==id){
-				if($("span#"+id+"_span").length>0){
-					$("span#"+id+"_span").remove();
-
-				}
-			}
-		}
-	});
 	$('#treeDragDrop').on("select_node.jstree", function (e, data) {
 		var id = data.node.id;
 		var folderName = data.node.text;
 		selectedFolderName = folderName;
 		selectedFolder = id;
-		if(id!=="0"){
-			var pluHtml = '<a id ="'+id+'_plus"class="fa fa-plus-circle modal-with-form" href="#modalForm"></a>'
-			var minusHtml = '<a id ="'+id+'_minus"class="fa fa-minus-circle modal-remove" href="#removeModal"></a>'
-			var editHtml = '<a id ="'+id+'_edit"class="fa fa-edit modal-edit" onclick="editFolder(\''+data.node.text+'\',\''+ id+'\')" href="#editModal" style="padding-left:5px;"></a>'
-			var span='<span id="'+id+'_span">'+pluHtml+minusHtml+editHtml+'</span>'
+		if(id==="10"){
+			selectedFolder=0;
+		}
+		if(id!=="-1" && id!=="-2"){
 
-			if($("span#"+id+"_span").length===0){
-				$("a#"+id+"_anchor").append(span);
-
-
-				$('.modal-remove').magnificPopup({
-					type: 'inline',
-					preloader: false,
-					modal: true
-				});
-				$('.modal-with-form').magnificPopup({
-					type: 'inline',
-					preloader: false,
-					focus: '#name',
-					modal: true
-				});
-				$('.modal-edit').magnificPopup({
-					type: 'inline',
-					preloader: false,
-					focus: '#editName',
-					modal: true,
-					callbacks: {
-						open: function() {
-							$("#editName").val(editFolderName);
-
-						}
-
-					}
-
-				});
-			}
+			showDocList(selectedFolder, selectedFolderName, initialCurrentPage, limit);
 		}
 
-		showDocList(id, selectedFolderName, initialCurrentPage, limit);
-
 	});
-
-
-	$('#treeDragDrop').on("hover_node.jstree", function (e, data) {
-		var id = data.node.id;
-
-		if(id!=="0" && selectedFolder!==id){
-
-			var pluHtml = '<a id ="'+id+'_plus"class="fa fa-plus-circle modal-with-form" href="#modalForm"></a>'
-			var minusHtml = '<a id ="'+id+'_minus"class="fa fa-minus-circle modal-remove" href="#removeModal"></a>'
-			var editHtml = '<a id ="'+id+'_edit"class="fa fa-edit modal-edit" onclick="editFolder(\''+data.node.text+'\',\''+ id+'\')" href="#editModal" style="padding-left:5px;"></a>'
-			var span='<span id="'+id+'_span">'+pluHtml+minusHtml+editHtml+'</span>'
-
-			if($("span#"+id+"_span").length===0){
-				$("a#"+id+"_anchor").append(span);
-
-
-				$('.modal-remove').magnificPopup({
-					type: 'inline',
-					preloader: false,
-					modal: true
-				});
-				$('.modal-with-form').magnificPopup({
-					type: 'inline',
-					preloader: false,
-					focus: '#name',
-					modal: true
-				});
-				$('.modal-edit').magnificPopup({
-					type: 'inline',
-					preloader: false,
-					focus: '#editName',
-					modal: true,
-					callbacks: {
-						open: function() {
-							$("#editName").val(editFolderName);
-
-						}
-
-					}
-
-				});
-			}
-		}
-	});
-
 
 	$('#basicTree').on("select_node.jstree", function (e, data) {
 		var id = data.node.id;
@@ -440,7 +343,7 @@ function fetchFolders(){
 function processChildFolder(parent, folder, folders){
 	var foldObject = {};
 	foldObject['text']=folder.name;
-	foldObject['id']=folder._id;
+	foldObject['id']=folder._id!==0?folder._id:10;
 	foldObject['type']='folder';
 	createFolders(parent, foldObject).then(function(res){
 		folder.child.forEach(function(child){
@@ -490,7 +393,7 @@ function createFolders(parent, data){
 }
 
 
-function showDocList(folderId, folderName, page, limitToSend){
+function showDocList(vulnerability_type, folderName, page, limitToSend){
 	$("#docList").removeClass("hide");
 	$("#dashboardData").addClass("hide");
 	$("#documentDetail").addClass("hide");
@@ -500,7 +403,7 @@ function showDocList(folderId, folderName, page, limitToSend){
 	$("#documentList").empty();
 	$("#pagination").empty();
 	$("#pageDesc").text("");
-	getDocumentsInsideFolder(folderId, limitToSend, page).then(function(data){
+	getDocumentsInsideFolder(vulnerability_type, limitToSend, page).then(function(data){
 		currentPage = data.page;
 		limit = data.limit;
 		totalDocs = data.total;
@@ -583,12 +486,40 @@ function renderDocumentList(documents){
 
 	}
 }
+function getFileName(vulnerability_type){
+	switch (vulnerability_type) {
+		case 0:
+		return "Uninitialized heap access"
+		break;
+		case 1:
+		return "Heap overflow"
+		break;
+		case 2:
+		return "Use after free"
+		break;
+		case 3:
+		return "Undetermined heap"
+		break;
+		case 4:
+		return "Uninitialized stack"
+		break;
+		case 5:
+		return "Undetermined stack"
+		break;
+		case 6:
+		return "Undetermined"
+		break;
+		default:
+
+	}
+}
 
 function addDocumentInList(document){
 	var filePath = document.original_path;
-	var fileName = filePath.substring(filePath.lastIndexOf("\\")+1, filePath.length);
-	var targetAddress = document.target_address;
-	var html = '<li class="unread"><div class="checkbox-custom checkbox-text-primary ib"><input type="checkbox" name="test" val='+document._id+' id="'+document._id+'_document"><label for="mail1"></label></div><a href="#" onClick="openDocument(\''+document._id+'\')";"><div class="col-sender"><p class="m-none ib">'+fileName+'</p></div><div class="col-mail"><p class="m-none mail-content"><span class="subject">'+filePath+'</span></p><p class="m-none mail-date">'+targetAddress+'</p></div></a></li>'
+	var fileName = getFileName(document.vulnerability_type)
+	var size = document.instruction_descriptor.access_size;
+	var access = document.instruction_descriptor.is_write?"write":"read";
+	var html = '<li class="unread"><a href="#" onClick="openDocument(\''+document._id+'\')";"><div class="col-sender"><p class="m-none ib">'+fileName+'</p></div><div class="col-mail"><p class="m-none mail-content"><span class="subject" title="'+filePath+'">'+filePath+'</span><span class="subject-inline" title="'+filePath+'" style="margin-left:55px">'+access+'</span><span class="subject-inline" title="'+filePath+'" style="margin-left:15px">'+size+'</span></p></div></a></li>'
 	return html;
 }
 
@@ -597,11 +528,11 @@ function renderDocument(document){
 	var fileName = filePath.substring(filePath.lastIndexOf("\\")+1, filePath.length);
 	$("#docName").text(fileName);
 	$("#originalPath").val(filePath);
-	$("#access_size").val(document.instruction_descriptor.access_size);
-	$("#rep_counter").val(document.instruction_descriptor.rep_counter);
-	$("#direction").val(document.instruction_descriptor.direction);
-	$("#is_write").val(document.instruction_descriptor.is_write);
-	$("#is_repeat").val(document.instruction_descriptor.is_repeat);
+	$("#access_size").text(" "+document.instruction_descriptor.access_size);
+	$("#rep_counter").text(" "+(document.instruction_descriptor.repeat_information?document.instruction_descriptor.repeat_information.rep_counter:""));
+	$("#direction").text(" "+(document.instruction_descriptor.repeat_information?document.instruction_descriptor.repeat_information.direction:""));
+	$("#is_write").text(" "+document.instruction_descriptor.is_write);
+	$("#is_repeat").text(" "+(document.instruction_descriptor.repeat_information?true:false));
 	$("#loading_address").val(document.runtime_information.loading_address?document.runtime_information.loading_address.toString(16):"");
 	$("#process_id").val(document.runtime_information.process_id?document.runtime_information.process_id.toString(16):"");
 	$("#thread_id").val(document.runtime_information.thread_id?document.runtime_information.thread_id.toString(16):"");
@@ -658,9 +589,12 @@ function renderStackTraces(stacktraces){
 	var index = 1;
 	$("#stackTraceInfo").empty();
 	stacktraces.forEach(function(stacktrace){
-		var html = renderStackTrace(index, stacktrace.rva_on_original, stacktrace.rva, stacktrace.function, stacktrace.module, stacktrace.repository.original, stacktrace.repository.mined)
+		var htmlEdit = renderStackTraceEdit(index, stacktrace.rva_on_original, stacktrace.rva, stacktrace.function, stacktrace.module, stacktrace.repository.original, stacktrace.repository.mined)
+		var html= renderStackTrace(index, stacktrace.rva_on_original, stacktrace.rva, stacktrace.function, stacktrace.module, stacktrace.repository.original, stacktrace.repository.mined)
 		index++;
+		$("#stackTraceInfo").append(htmlEdit);
 		$("#stackTraceInfo").append(html);
+
 	});
 }
 function rvaOnOriginalChanged(index, value){
@@ -695,38 +629,34 @@ function minedChanged(index, value){
 }
 function enableStackTraceRow(index){
 	if(index>=0){
-		$("#rva_on_original_"+index).attr("readonly", false);
-		$("#rva_"+index).attr("readonly", false);
-		$("#module_"+index).attr("readonly", false);
-		$("#function_"+index).attr("readonly", false);
-		$("#original_"+index).attr("readonly", false);
-		$("#mined_"+index).attr("readonly", false);
+		$("#stacktrace_"+index).addClass("hide");
+		$("#stacktrace_edit_"+index).removeClass("hide");
 	}
 }
-function renderStackTrace(index, rva_on_original, rva, func, mod, original, mined){
+function renderStackTraceEdit(index, rva_on_original, rva, func, mod, original, mined){
 	var rvaVal = rva?rva.toString(16):"";
-	var html = '<div class="row">'+
+	var html = '<div id="stacktrace_edit_'+index+'" class="hide"><div class="row" >'+
 	'<label class="col-md-3 control-label" for="inputDisabled">'+index+'</label>'+
-	'<button class="col-md-1 col-md-offset-7 btn btn-default btn-sm" onClick="enableStackTraceRow('+index+')" type="submit">Edit</button></div>'+
+	'</div>'+
 	'<div class="row">'+
 	'<div class = "col-md-9 col-md-offset-3">'+
 	'<div class="row">'+
 	'<div class="col-md-3">'+
 	'<div class="form-group">'+
 	'<label class="control-label">rva_on_original</label>'+
-	'<input type="text" name="rva_on_original" readonly="true" id="rva_on_original_'+index+'" class="form-control input-sm" value="'+rva_on_original+'" onchange="rvaOnOriginalChanged('+(index-1)+',this.value)">'+
+	'<input type="text" name="rva_on_original" id="rva_on_original_'+index+'" class="form-control input-sm" value="'+rva_on_original+'" onchange="rvaOnOriginalChanged('+(index-1)+',this.value)">'+
 	'</div>'+
 	'</div>'+
 	'<div class="col-md-3">'+
 	'<div class="form-group">'+
 	'<label class="control-label">rva</label>'+
-	'<input type="text" name="rva" id="rva_'+index+'" readonly="true" class="form-control input-sm" value="'+rvaVal+'" onchange="rvaChanged('+(index-1)+',this.value)">'+
+	'<input type="text" name="rva" id="rva_'+index+'" class="form-control input-sm" value="'+rvaVal+'" onchange="rvaChanged('+(index-1)+',this.value)">'+
 	'</div>'+
 	'</div>'+
 	'<div class="col-md-4">'+
 	'<div class="form-group">'+
 	'<label class="control-label">module</label>'+
-	'<input type="text" name="module" id="module_'+index+'" readonly="true" class="form-control input-sm" value="'+mod+'" onchange="moduleChanged('+(index-1)+',this.value)">'+
+	'<input type="text" name="module" id="module_'+index+'" class="form-control input-sm" value="'+mod+'" onchange="moduleChanged('+(index-1)+',this.value)">'+
 	'</div>'+
 	'</div>'+
 	'</div>'+
@@ -734,7 +664,7 @@ function renderStackTrace(index, rva_on_original, rva, func, mod, original, mine
 	'<div class="col-md-11">'+
 	'<div class="form-group">'+
 	'<label class="control-label">function</label>'+
-	'<input type="text" name="function" id="function_'+index+'" readonly="true" class="form-control input-sm" value="'+func+'" onchange="functionChanged('+(index-1)+',this.value)">'+
+	'<input type="text" name="function" id="function_'+index+'" class="form-control input-sm" value="'+func+'" onchange="functionChanged('+(index-1)+',this.value)">'+
 	'</div>'+
 	'</div>'+
 	'</div>'+
@@ -743,13 +673,13 @@ function renderStackTrace(index, rva_on_original, rva, func, mod, original, mine
 	'<div class="col-md-5">'+
 	'<div class="form-group">'+
 	'<label class="control-label">Original Repository</label>'+
-	'<input type="text" name="original" id="original_'+index+'" readonly="true" class="form-control input-sm" value="'+original+'" onchange="originalChanged('+(index-1)+',this.value)">'+
+	'<input type="text" name="original" id="original_'+index+'" class="form-control input-sm" value="'+original+'" onchange="originalChanged('+(index-1)+',this.value)">'+
 	'</div>'+
 	'</div>'+
 	'<div class="col-md-5 col-md-offset-1">'+
 	'<div class="form-group">'+
 	'<label class="control-label">Mined Repository</label>'+
-	'<input type="text" name="mined" id="mined_'+index+'" readonly="true" class="form-control input-sm" value="'+mined+'" onchange="minedChanged('+(index-1)+',this.value)">'+
+	'<input type="text" name="mined" id="mined_'+index+'" class="form-control input-sm" value="'+mined+'" onchange="minedChanged('+(index-1)+',this.value)">'+
 	'</div>'+
 	'</div>'+
 
@@ -758,9 +688,64 @@ function renderStackTrace(index, rva_on_original, rva, func, mod, original, mine
 	'</div>'+
 	'</div>'+
 
-	'</div>'
+	'</div></div>'
 	return html;
 }
+
+function renderStackTrace(index, rva_on_original, rva, func, mod, original, mined){
+	var rvaVal = rva?rva.toString(16):"";
+	var html = '<div id="stacktrace_'+index+'"><div class="row" >'+
+	'<label class="col-md-3 control-label" for="inputDisabled">'+index+'</label>'+
+	'<button class="col-md-1 col-md-offset-7 btn btn-default btn-sm" onClick="enableStackTraceRow('+index+')" type="submit">Edit</button></div>'+
+	'<div class="row">'+
+	'<div class = "col-md-9 col-md-offset-3">'+
+	'<div class="row">'+
+	'<div class="col-md-3">'+
+	'<div class="form-group">'+
+	'<label class="control-label"><strong>rva_on_original: </strong><span></span>'+rva_on_original+'</label>'+
+	'</div>'+
+	'</div>'+
+	'<div class="col-md-3">'+
+	'<div class="form-group">'+
+	'<label class="control-label"><strong>rva: </strong><span>'+rvaVal+'</span></label>'+
+	'</div>'+
+	'</div>'+
+	'<div class="col-md-4">'+
+	'<div class="form-group">'+
+	'<label class="control-label"><strong>module: </strong><span>'+mod+'</span></label>'+
+	'</div>'+
+	'</div>'+
+	'</div>'+
+	'<div class="row">'+
+	'<div class="col-md-11">'+
+	'<div class="form-group">'+
+	'<label class="control-label"><strong>function: </strong><span>'+func+'</span></label>'+
+	'</div>'+
+	'</div>'+
+	'</div>'+
+	'<div class="row">'+
+
+	'<div class="col-md-12">'+
+	'<div class="form-group">'+
+	'<label class="control-label"><strong>Original Repository: </strong><span>'+original+'</span></label>'+
+	'</div>'+
+	'</div>'+
+	'</div><div class="row">'+
+	'<div class="col-md-12">'+
+	'<div class="form-group">'+
+	'<label class="control-label"><strong>Mined Repository: </strong><span>'+mined+'</span></label>'+
+	'</div>'+
+	'</div>'+
+
+	'</div>'+
+	'<hr>'+
+	'</div>'+
+	'</div>'+
+
+	'</div></div>'
+	return html;
+}
+
 function openDocument(docId){
 	$("#docList").addClass("hide");
 	$("#documentDetail").removeClass("hide");

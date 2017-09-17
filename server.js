@@ -44,7 +44,32 @@ app.use(bodyParser.json());
 app.get('/api/web/folder', async (req,res) => {
 
   if(process.env.REPORT_SERVICE_URL){
-    var uri = process.env.REPORT_SERVICE_URL + "/folder";
+    var uri = process.env.REPORT_SERVICE_URL + "/folder/new";
+    if(Object.keys(req.query).length>0){
+      uri =uri+"?"+ querystring.stringify(req.query);
+    }
+
+    var options = {
+      uri,
+      json: true
+    }
+    try{
+      var response = await rp(options);
+      res.status(200).send(response);
+    }catch(e){
+
+      res.status(500).send();
+    }
+  }
+  else{
+    res.status(500).send();
+  }
+}
+);
+app.get('/api/web/document', async (req,res) => {
+
+  if(process.env.REPORT_SERVICE_URL){
+    var uri = process.env.REPORT_SERVICE_URL + "/document";
     if(Object.keys(req.query).length>0){
       uri =uri+"?"+ querystring.stringify(req.query);
     }

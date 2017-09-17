@@ -38,7 +38,11 @@ function fetchFoldersOverview(){
       if(!folders[key].parent){
         var rootFolder = {};
         data.push(rootFolder);
-        rootFolder['text']=folders[key].name+":  "+folders[key].document.length+" documents";
+        var name = folders[key].name;
+        if(folders[key]._id===6){
+          name=name+":  "+folders[key].count+" documents"
+        }
+        rootFolder['text']=name;
         rootFolder['id']=folders[key]._id;
         rootFolder['type']='folder';
         rootFolder['state'] = {
@@ -62,7 +66,7 @@ function fetchFoldersOverview(){
 
 function processChildFolderOverview(parent, folder, folders){
   var foldObject = {};
-  foldObject['text']=folder.name+":  "+folder.document.length+" documents";
+  foldObject['text']=folder.name+":  "+folder.count+" documents";
   foldObject['id']=folder._id;
   foldObject['type']='folder';
   foldObject['state'] = {

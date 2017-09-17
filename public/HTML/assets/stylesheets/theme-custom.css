@@ -6,3 +6,21 @@
 .form-horizontal .form-group {
     margin-left: 15px;
 }
+.form-horizontal .left-text-align {
+  text-align: left;
+}
+.col-mail .mail-content .subject{
+  width: 320px;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+display: inline-block;
+}
+
+.col-mail .mail-content .subject-inline{
+  width: 170px;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+display: inline-block;
+}
